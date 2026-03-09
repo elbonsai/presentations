@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>The Blank Canvas Paradox</title>
+  <script>document.documentElement.classList.add('js')</script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #2C2A28;
+      --bg-deep: #201F1D;
+      --text: #F7F5F2;
+      --text-dim: rgba(247, 245, 242, 0.7);
+      --text-muted: rgba(247, 245, 242, 0.5);
+      --copper: #B87333;
+      --copper-glow: rgba(184, 115, 51, 0.15);
+      --malachite: #5B8C6F;
+      --amethyst: #7B6B8A;
+      --slate: #6B7FA0;
+      --surface: rgba(247, 245, 242, 0.05);
+      --surface-raised: rgba(247, 245, 242, 0.08);
+      --border: rgba(247, 245, 242, 0.10);
+      --border-vis: rgba(247, 245, 242, 0.15);
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+      --fs-hero: clamp(40px, 8vw, 76px);
+      --fs-headline: clamp(28px, 6vw, 54px);
+      --fs-medium: clamp(22px, 4.5vw, 38px);
+      --fs-sub: clamp(17px, 2.8vw, 26px);
+      --fs-body: clamp(15px, 2.2vw, 18px);
+      --fs-small: clamp(13px, 1.8vw, 15px);
+      --fs-label: clamp(11px, 1.5vw, 13px);
+      --pad: clamp(24px, 6vw, 80px);
+      --gap: clamp(16px, 3vw, 32px);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: radial-gradient(ellipse at 50% 50%, #332F2C, var(--bg) 60%, var(--bg-deep));
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Slides */
+    .slide {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: clamp(60px, 10vw, 120px) var(--pad) clamp(80px, 12vw, 100px);
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .slide.active { display: flex; animation: fadeIn 0.35s ease; }
+    .center { text-align: center; align-items: center; justify-content: center; }
+
+    /* Typography */
+    .label {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--copper);
+      margin-bottom: clamp(16px, 3vw, 32px);
+    }
+    .hero {
+      font-size: var(--fs-hero);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      text-shadow: 0 0 80px var(--copper-glow);
+    }
+    .headline {
+      font-size: var(--fs-headline);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: clamp(12px, 2vw, 24px);
+    }
+    .medium {
+      font-size: var(--fs-medium);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .sub {
+      font-size: var(--fs-sub);
+      line-height: 1.5;
+      color: var(--text-dim);
+    }
+    .body-text {
+      font-size: var(--fs-body);
+      line-height: 1.7;
+      color: var(--text-dim);
+    }
+    .small { font-size: var(--fs-small); color: var(--text-muted); }
+    .mono { font-family: var(--font-mono); }
+
+    /* Colors */
+    .c-copper { color: var(--copper); }
+    .c-malachite { color: var(--malachite); }
+    .c-amethyst { color: var(--amethyst); }
+    .c-slate { color: var(--slate); }
+
+    /* Layout */
+    .narrow { max-width: 740px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: var(--gap);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--gap);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+      gap: var(--gap);
+    }
+    .spacer { height: clamp(16px, 3vw, 32px); }
+    .spacer-lg { height: clamp(24px, 5vw, 48px); }
+    .rule {
+      width: 60px;
+      height: 1px;
+      background: var(--copper);
+      margin: clamp(16px, 3vw, 28px) auto;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: clamp(12px, 2vw, 16px);
+      padding: clamp(20px, 4vw, 32px);
+    }
+    .card-accent { border-left: 3px solid var(--copper); }
+    .card-accent-m { border-left-color: var(--malachite); }
+    .card-accent-a { border-left-color: var(--amethyst); }
+    .card-accent-s { border-left-color: var(--slate); }
+    .card-title {
+      font-size: var(--fs-sub);
+      font-weight: 600;
+      margin-bottom: clamp(8px, 1.5vw, 12px);
+    }
+    .card-body {
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--text-dim);
+    }
+
+    /* Stats */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+      gap: var(--gap);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: clamp(44px, 11vw, 88px);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--copper);
+    }
+    .stat-label {
+      font-size: var(--fs-small);
+      color: var(--text-dim);
+      margin-top: clamp(4px, 1vw, 8px);
+    }
+    .stat-note {
+      font-size: var(--fs-label);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Code */
+    .code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: clamp(16px, 3vw, 24px);
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-x: auto;
+      color: var(--text-dim);
+    }
+    .code-comment { color: var(--text-muted); }
+    .code-keyword { color: var(--malachite); }
+    .code-string { color: var(--copper); }
+
+    /* Comparison */
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: 2px;
+    }
+    .comp-cell {
+      background: var(--surface-raised);
+      padding: clamp(20px, 4vw, 32px);
+      border-radius: clamp(8px, 1vw, 12px);
+    }
+    .comp-header {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: clamp(12px, 2vw, 20px);
+    }
+
+    /* Quote */
+    .quote {
+      font-size: clamp(18px, 3.5vw, 30px);
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* Bullet list */
+    .bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+    .bullet-list li {
+      font-size: var(--fs-body);
+      color: var(--text-dim);
+      line-height: 1.8;
+      padding-left: 16px;
+      position: relative;
+    }
+    .bullet-list li::before {
+      content: '\00B7';
+      position: absolute;
+      left: 4px;
+      color: var(--copper);
+    }
+
+    /* Source citation */
+    .source {
+      font-size: var(--fs-label);
+      color: var(--text-muted);
+      margin-top: clamp(12px, 2vw, 20px);
+      font-style: italic;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(247, 245, 242, 0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-dot:hover { background: rgba(247, 245, 242, 0.3); }
+    .nav-dot.active {
+      background: var(--copper);
+      transform: scale(1.3);
+    }
+    .slide-counter {
+      position: fixed;
+      bottom: 30px;
+      right: 32px;
+      font-size: var(--fs-label);
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      z-index: 100;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .slide { padding: 16px var(--pad) 60px; }
+      .slide.center { justify-content: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .slide * { animation: none !important; transition: none !important; }
+    }
+    @media (max-width: 600px) {
+      .comparison { grid-template-columns: 1fr; }
+    }
+
+    /* Progressive enhancement: no-JS fallback */
+    html:not(.js) .slide {
+      display: flex !important;
+      position: relative !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+      transform: none !important;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+    html.js { overflow: hidden; }
+    html.js body { overflow: hidden; overscroll-behavior: none; }
+    html.js .slide { display: none; }
+    html.js .slide.active { display: flex; }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide active center">
+    <div class="label">AI Interface Design</div>
+    <h1 class="hero">The Blank Canvas<br>Paradox</h1>
+    <div class="rule"></div>
+    <p class="sub narrow">Why empty chat prompts paralyze users &mdash; and how to design around it</p>
+    <div class="spacer-lg"></div>
+    <p class="small">For Engineers &middot; 2025</p>
+  </div>
+
+  <!-- Slide 2: The Core Problem -->
+  <div class="slide">
+    <div class="label">The Problem</div>
+    <h2 class="headline">An Empty Text Box Is Not an Invitation</h2>
+    <p class="body-text narrow">When users encounter a blank chat prompt, they face a paradox: the interface offers infinite possibility but zero guidance. Most don&rsquo;t know what the system can do, how to ask for it, or what &ldquo;good&rdquo; input looks like. The result is paralysis, not creativity.</p>
+    <div class="spacer-lg"></div>
+    <div class="stat-grid">
+      <div>
+        <div class="stat-number" style="color:var(--malachite)">10<span style="font-size:0.5em">min</span></div>
+        <div class="stat-label">users ignored Gemini&rsquo;s onboarding</div>
+        <div class="stat-note">Rosala &middot; NNGroup &middot; Feb 2026</div>
+      </div>
+      <div>
+        <div class="stat-number" style="color:var(--copper)">6/9</div>
+        <div class="stat-label">participants ping-ponged between AI and search</div>
+        <div class="stat-note">Rosala &amp; Brown &middot; NNGroup &middot; Feb 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: How Users Actually Prompt -->
+  <div class="slide">
+    <div class="label">User Behavior</div>
+    <h2 class="headline">Users Prompt Like They Search</h2>
+    <p class="body-text narrow">Research shows most users default to keyword-style, search-engine queries &mdash; not the rich, contextual prompts that LLMs need to perform well. This isn&rsquo;t a user failure; it&rsquo;s a design failure.</p>
+    <div class="spacer-lg"></div>
+    <div class="comparison">
+      <div class="comp-cell">
+        <div class="comp-header c-amethyst">What users type</div>
+        <div class="code" style="border:none;background:transparent;padding:0"><span class="code-string">"best practices REST API"</span>
+<span class="code-string">"python sort list"</span>
+<span class="code-string">"fix memory leak"</span></div>
+      </div>
+      <div class="comp-cell">
+        <div class="comp-header c-malachite">What LLMs need</div>
+        <div class="code" style="border:none;background:transparent;padding:0"><span class="code-string">"I&rsquo;m building a REST API in Go for a real-time IoT dashboard. What are the best practices for connection pooling and rate limiting at scale?"</span></div>
+      </div>
+    </div>
+    <div class="source">Rosala &middot; NNGroup &middot; &ldquo;How AI Literacy Shapes GenAI Use&rdquo; &middot; Feb 2026</div>
+  </div>
+
+  <!-- Slide 4: AI Literacy Gap -->
+  <div class="slide">
+    <div class="label">Research</div>
+    <h2 class="headline">The AI Literacy Gap</h2>
+    <p class="body-text narrow">AI literacy isn&rsquo;t one skill &mdash; it&rsquo;s two independent dimensions. And the people most receptive to AI tools are often the least equipped to use them well.</p>
+    <div class="spacer-lg"></div>
+    <div class="grid-2">
+      <div class="card card-accent">
+        <div class="card-title c-copper">Prompt Fluency</div>
+        <div class="card-body">The ability to formulate effective inputs &mdash; knowing what to ask and how to structure it for the model.</div>
+      </div>
+      <div class="card card-accent card-accent-m">
+        <div class="card-title c-malachite">Output Literacy</div>
+        <div class="card-body">The ability to critically evaluate AI responses &mdash; recognizing hallucinations, biases, and gaps.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="card card-accent card-accent-a" style="max-width:740px">
+      <div class="card-body"><span class="c-amethyst" style="font-weight:600">Key finding:</span> Lower AI knowledge predicts <em>higher</em> receptivity to AI recommendations &mdash; the people most eager to use AI are least able to assess its output.</div>
+      <div class="source" style="margin-top:8px">Tully et al. &middot; Journal of Marketing &middot; 2025 &middot; 6 studies</div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Structured Onboarding -->
+  <div class="slide">
+    <div class="label">Pattern 1</div>
+    <h2 class="headline">Structured Onboarding</h2>
+    <p class="body-text narrow">Replace the blank canvas with structured entry points that make capabilities visible and discoverable.</p>
+    <div class="spacer-lg"></div>
+    <div class="grid-3">
+      <div class="card card-accent">
+        <div class="card-title c-copper">Capability Cards</div>
+        <div class="card-body">Show categorized examples of what the system can do: &ldquo;Write code,&rdquo; &ldquo;Analyze data,&rdquo; &ldquo;Explain concepts.&rdquo; Let users click, not imagine.</div>
+      </div>
+      <div class="card card-accent card-accent-m">
+        <div class="card-title c-malachite">Prompt Templates</div>
+        <div class="card-body">Offer fill-in-the-blank scaffolds: &ldquo;Help me [verb] a [noun] that [constraint].&rdquo; Lower the cognitive bar from generation to selection.</div>
+      </div>
+      <div class="card card-accent card-accent-a">
+        <div class="card-title c-amethyst">Domain Starters</div>
+        <div class="card-body">Context-aware suggestions based on workspace, file type, or project state. Meet users where they already are.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <p class="small narrow" style="text-align:center">Design principle: <span class="c-copper">recognition over recall</span> &mdash; users should choose from visible options, not generate from memory.</p>
+  </div>
+
+  <!-- Slide 6: Slash Commands -->
+  <div class="slide">
+    <div class="label">Pattern 2</div>
+    <h2 class="headline">Slash Commands &amp;<br>Contextual Hints</h2>
+    <p class="body-text narrow">Structured input mechanisms that bridge the gap between freeform text and discrete actions.</p>
+    <div class="spacer-lg"></div>
+    <div class="grid-2">
+      <div>
+        <div class="code"><span class="code-comment">// Slash commands as structured entry points</span>
+<span class="code-keyword">/explain</span>  <span class="code-comment">&rarr; Break down this code</span>
+<span class="code-keyword">/refactor</span> <span class="code-comment">&rarr; Improve with best practices</span>
+<span class="code-keyword">/test</span>     <span class="code-comment">&rarr; Generate unit tests</span>
+<span class="code-keyword">/doc</span>      <span class="code-comment">&rarr; Add documentation</span>
+<span class="code-keyword">/fix</span>      <span class="code-comment">&rarr; Diagnose and repair error</span></div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li>Discoverable via <span class="mono c-copper">/</span> keystroke</li>
+          <li>Typed, predictable behaviors vs. freeform ambiguity</li>
+          <li>Contextual hints: suggest <span class="mono">/fix</span> when an error is detected, <span class="mono">/doc</span> when a function lacks comments</li>
+          <li>Progressive depth: basic use is visible, advanced parameters available but not required</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: GenUI -->
+  <div class="slide">
+    <div class="label">Pattern 3</div>
+    <h2 class="headline">GenUI: Beyond the Text Box</h2>
+    <p class="body-text narrow">Generative UI embeds interactive widgets &mdash; buttons, checkboxes, dropdowns &mdash; directly into chat responses. This transforms conversations from pure text into hybrid interfaces.</p>
+    <div class="spacer-lg"></div>
+    <div class="comparison">
+      <div class="comp-cell">
+        <div class="comp-header c-amethyst">Text-only follow-ups</div>
+        <p class="body-text">&ldquo;Error-prone and cognitively taxing&rdquo; &mdash; users must read, memorize, and retype options from the AI&rsquo;s response.</p>
+        <div class="source">Perplexity &middot; Moran &middot; NNGroup &middot; Mar 2026</div>
+      </div>
+      <div class="comp-cell">
+        <div class="comp-header c-malachite">Widget-based follow-ups</div>
+        <p class="body-text">Claude&rsquo;s AskUserQuestion widget was &ldquo;substantially faster and easier.&rdquo; Google AI Mode checkboxes eliminate the read/memorize/retype cycle entirely.</p>
+        <div class="source">Moran &middot; NNGroup &middot; Mar 2026</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <p class="small narrow" style="text-align:center">It is <span class="c-copper">&ldquo;never realistic to expect consumers to become perfect prompt engineers&rdquo;</span> &mdash; Moran, NNGroup 2026</p>
+  </div>
+
+  <!-- Slide 8: Transparency -->
+  <div class="slide">
+    <div class="label">Pattern 4</div>
+    <h2 class="headline">Transparency Builds Trust</h2>
+    <p class="body-text narrow">Users don&rsquo;t just need answers &mdash; they need evidence that answers are worth trusting. Without transparency, they hedge by cross-referencing with traditional search.</p>
+    <div class="spacer-lg"></div>
+    <div class="stat-grid">
+      <div>
+        <div class="stat-number" style="color:var(--slate)">6/9</div>
+        <div class="stat-label">participants switched between AI and search to verify</div>
+        <div class="stat-note">Rosala &amp; Brown &middot; NNGroup &middot; Feb 2026</div>
+      </div>
+    </div>
+    <div class="spacer-lg"></div>
+    <div class="grid-3">
+      <div class="card card-accent">
+        <div class="card-title c-copper">Source Attribution</div>
+        <div class="card-body">Inline citations and links to source material. Let users verify without leaving the conversation.</div>
+      </div>
+      <div class="card card-accent card-accent-m">
+        <div class="card-title c-malachite">Confidence Signals</div>
+        <div class="card-body">Explicit uncertainty markers. &ldquo;I&rsquo;m not sure about this&rdquo; is more trustworthy than false confidence.</div>
+      </div>
+      <div class="card card-accent card-accent-a">
+        <div class="card-title c-amethyst">Reasoning Traces</div>
+        <div class="card-body">Show the chain of reasoning. Collapsible step-by-step breakdowns that engineers can audit.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Advanced Patterns -->
+  <div class="slide">
+    <div class="label">Advanced Patterns</div>
+    <h2 class="headline">Beyond the Single Turn</h2>
+    <p class="body-text narrow">The blank canvas isn&rsquo;t just a first-interaction problem. Each new session resets context. Advanced patterns create continuity and expand the input surface.</p>
+    <div class="spacer-lg"></div>
+    <div class="grid-3">
+      <div class="card card-accent">
+        <div class="card-title c-copper">Memory &amp; Persistence</div>
+        <div class="card-body">Remember user preferences, project context, and past decisions across sessions. Transform every return visit from blank canvas to warm handoff.</div>
+      </div>
+      <div class="card card-accent card-accent-m">
+        <div class="card-title c-malachite">Multimodal Input</div>
+        <div class="card-body">Screenshots, diagrams, voice, files &mdash; not every intent maps cleanly to text. Give users the input modality that matches their thought.</div>
+      </div>
+      <div class="card card-accent card-accent-s">
+        <div class="card-title c-slate">Workspace &amp; Canvas</div>
+        <div class="card-body">Move beyond linear chat into persistent, editable artifacts. Side-by-side editing surfaces where AI is collaborator, not oracle.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <p class="small narrow" style="text-align:center">Design principle: <span class="c-copper">collaborative framing</span> &mdash; the system is a partner, not a question-answering machine.</p>
+  </div>
+
+  <!-- Slide 10: Closing -->
+  <div class="slide center">
+    <div class="rule"></div>
+    <div class="spacer"></div>
+    <p class="quote narrow">&ldquo;The best AI interfaces don&rsquo;t ask users to imagine what&rsquo;s possible &mdash; they make possibility visible.&rdquo;</p>
+    <div class="spacer-lg"></div>
+    <p class="medium c-copper narrow">Recognition over recall. Progressive depth. Mental model alignment.</p>
+    <div class="spacer"></div>
+    <div class="grid-4" style="max-width:680px">
+      <div style="text-align:center">
+        <div class="small c-malachite" style="font-weight:600">Structure</div>
+        <div class="small">not freedom</div>
+      </div>
+      <div style="text-align:center">
+        <div class="small c-copper" style="font-weight:600">Scaffolds</div>
+        <div class="small">not blank pages</div>
+      </div>
+      <div style="text-align:center">
+        <div class="small c-amethyst" style="font-weight:600">Widgets</div>
+        <div class="small">not text walls</div>
+      </div>
+      <div style="text-align:center">
+        <div class="small c-slate" style="font-weight:600">Trust</div>
+        <div class="small">not black boxes</div>
+      </div>
+    </div>
+    <div class="spacer-lg"></div>
+    <p class="small">Sources: NNGroup (Moran 2026, Rosala 2026, Rosala &amp; Brown 2026) &middot; Tully et al., Journal of Marketing 2025</p>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav" id="nav"></div>
+  <div class="slide-counter" id="counter"></div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function showSlide(n) {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (n + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+      updateNav();
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('nav');
+      const counter = document.getElementById('counter');
+      nav.innerHTML = '';
+      slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'nav-dot' + (i === currentSlide ? ' active' : '');
+        dot.onclick = (e) => { e.stopPropagation(); showSlide(i); };
+        nav.appendChild(dot);
+      });
+      counter.textContent = (currentSlide + 1) + ' / ' + slides.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide(currentSlide + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(currentSlide - 1); }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.nav') || e.target.closest('a')) return;
+      if (e.clientX > window.innerWidth / 2) showSlide(currentSlide + 1);
+      else showSlide(currentSlide - 1);
+    });
+
+    let touchStartX = 0;
+    const SWIPE_THRESHOLD = 50;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > SWIPE_THRESHOLD) {
+        if (diff > 0) showSlide(currentSlide + 1);
+        else showSlide(currentSlide - 1);
+      }
+    }, { passive: true });
+
+    updateNav();
+  </script>
+</body>
+</html>
