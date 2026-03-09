@@ -1,5 +1,4 @@
 .env
-presentations/
 __pycache__/
 *.egg-info/
 dist/
