@@ -252,6 +252,37 @@
       font-style: italic;
     }
 
+    /* Screenshot embed */
+    .screenshot-wrap {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      border-radius: clamp(8px, 1.5vw, 14px);
+      overflow: hidden;
+      border: 1px solid var(--border-vis);
+    }
+    .screenshot-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .screenshot-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--fs-small);
+      font-family: var(--font-mono);
+      color: var(--copper);
+      text-decoration: none;
+      margin-top: clamp(8px, 1.5vw, 16px);
+      transition: color 0.2s ease;
+    }
+    .screenshot-link:hover { color: var(--text); }
+
     /* Navigation */
     .nav {
       position: fixed;
@@ -333,7 +364,55 @@
     <p class="small">For Engineers &middot; 2025</p>
   </div>
 
-  <!-- Slide 2: The Core Problem -->
+  <!-- Slide 2: ChatGPT -->
+  <div class="slide">
+    <div class="label">The Front Door</div>
+    <h2 class="headline">ChatGPT</h2>
+    <p class="body-text narrow">OpenAI&rsquo;s flagship interface. Suggestion chips above the input, but the dominant element is still a blank text area.</p>
+    <div class="spacer"></div>
+    <div class="screenshot-wrap">
+      <img src="assets/chatgpt.png" alt="ChatGPT landing page screenshot" loading="lazy">
+    </div>
+    <a class="screenshot-link" href="https://chatgpt.com" target="_blank" rel="noopener">chatgpt.com &rarr;</a>
+  </div>
+
+  <!-- Slide 3: GitHub Copilot -->
+  <div class="slide">
+    <div class="label">The Front Door</div>
+    <h2 class="headline">GitHub Copilot</h2>
+    <p class="body-text narrow">GitHub&rsquo;s AI assistant. Integrates slash commands and context-aware suggestions &mdash; but the chat panel still opens to an empty prompt.</p>
+    <div class="spacer"></div>
+    <div class="screenshot-wrap">
+      <img src="assets/github-copilot.png" alt="GitHub Copilot landing page screenshot" loading="lazy">
+    </div>
+    <a class="screenshot-link" href="https://github.com/copilot" target="_blank" rel="noopener">github.com/copilot &rarr;</a>
+  </div>
+
+  <!-- Slide 4: Claude -->
+  <div class="slide">
+    <div class="label">The Front Door</div>
+    <h2 class="headline">Claude</h2>
+    <p class="body-text narrow">Anthropic&rsquo;s conversational AI. Clean, minimal interface with a single text area &mdash; the quintessential blank canvas.</p>
+    <div class="spacer"></div>
+    <div class="screenshot-wrap">
+      <img src="assets/claude.png" alt="Claude landing page screenshot" loading="lazy">
+    </div>
+    <a class="screenshot-link" href="https://claude.ai" target="_blank" rel="noopener">claude.ai &rarr;</a>
+  </div>
+
+  <!-- Slide 5: Mistral -->
+  <div class="slide">
+    <div class="label">The Front Door</div>
+    <h2 class="headline">Mistral &mdash; Le Chat</h2>
+    <p class="body-text narrow">Mistral&rsquo;s chat interface. Action buttons and conversation starters surround the input, but the core interaction remains: type something.</p>
+    <div class="spacer"></div>
+    <div class="screenshot-wrap">
+      <img src="assets/mistral.png" alt="Mistral Le Chat landing page screenshot" loading="lazy">
+    </div>
+    <a class="screenshot-link" href="https://chat.mistral.ai" target="_blank" rel="noopener">chat.mistral.ai &rarr;</a>
+  </div>
+
+  <!-- Slide 6: The Core Problem -->
   <div class="slide">
     <div class="label">The Problem</div>
     <h2 class="headline">An Empty Text Box Is Not an Invitation</h2>
@@ -353,7 +432,7 @@
     </div>
   </div>
 
-  <!-- Slide 3: How Users Actually Prompt -->
+  <!-- Slide 7: How Users Actually Prompt -->
   <div class="slide">
     <div class="label">User Behavior</div>
     <h2 class="headline">Users Prompt Like They Search</h2>
@@ -374,7 +453,7 @@
     <div class="source">Rosala &middot; NNGroup &middot; &ldquo;How AI Literacy Shapes GenAI Use&rdquo; &middot; Feb 2026</div>
   </div>
 
-  <!-- Slide 4: AI Literacy Gap -->
+  <!-- Slide 8: AI Literacy Gap -->
   <div class="slide">
     <div class="label">Research</div>
     <h2 class="headline">The AI Literacy Gap</h2>
@@ -397,7 +476,7 @@
     </div>
   </div>
 
-  <!-- Slide 5: Structured Onboarding -->
+  <!-- Slide 9: Structured Onboarding -->
   <div class="slide">
     <div class="label">Pattern 1</div>
     <h2 class="headline">Structured Onboarding</h2>
@@ -421,7 +500,7 @@
     <p class="small narrow" style="text-align:center">Design principle: <span class="c-copper">recognition over recall</span> &mdash; users should choose from visible options, not generate from memory.</p>
   </div>
 
-  <!-- Slide 6: Slash Commands -->
+  <!-- Slide 10: Slash Commands -->
   <div class="slide">
     <div class="label">Pattern 2</div>
     <h2 class="headline">Slash Commands &amp;<br>Contextual Hints</h2>
@@ -447,7 +526,7 @@
     </div>
   </div>
 
-  <!-- Slide 7: GenUI -->
+  <!-- Slide 11: GenUI -->
   <div class="slide">
     <div class="label">Pattern 3</div>
     <h2 class="headline">GenUI: Beyond the Text Box</h2>
@@ -469,7 +548,7 @@
     <p class="small narrow" style="text-align:center">It is <span class="c-copper">&ldquo;never realistic to expect consumers to become perfect prompt engineers&rdquo;</span> &mdash; Moran, NNGroup 2026</p>
   </div>
 
-  <!-- Slide 8: Transparency -->
+  <!-- Slide 12: Transparency -->
   <div class="slide">
     <div class="label">Pattern 4</div>
     <h2 class="headline">Transparency Builds Trust</h2>
@@ -499,7 +578,7 @@
     </div>
   </div>
 
-  <!-- Slide 9: Advanced Patterns -->
+  <!-- Slide 13: Advanced Patterns -->
   <div class="slide">
     <div class="label">Advanced Patterns</div>
     <h2 class="headline">Beyond the Single Turn</h2>
@@ -523,7 +602,7 @@
     <p class="small narrow" style="text-align:center">Design principle: <span class="c-copper">collaborative framing</span> &mdash; the system is a partner, not a question-answering machine.</p>
   </div>
 
-  <!-- Slide 10: Closing -->
+  <!-- Slide 14: Closing -->
   <div class="slide center">
     <div class="rule"></div>
     <div class="spacer"></div>
