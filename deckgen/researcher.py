@@ -66,11 +66,24 @@ def research_topic(
     topic: str,
     audience: str = "technical professionals",
     additional_context: str = "",
-    num_slides: int = 10,
+    num_slides: int | None = None,
 ) -> ResearchResult:
     """Use the LLM to research a topic and return structured content."""
 
-    user_prompt = f"""Research this topic for a {num_slides}-slide professional presentation:
+    if num_slides:
+        slide_guidance = f"for a {num_slides}-slide professional presentation"
+        content_guidance = (
+            f"The presentation will have approximately {num_slides} slides, so provide enough\n"
+            f"content for that — typically 6-10 key points, 3-6 statistics, and 1-3 comparisons."
+        )
+    else:
+        slide_guidance = "for a professional presentation"
+        content_guidance = (
+            "Determine the ideal number of slides based on the content provided. "
+            "Provide enough key points, statistics, and comparisons to fill that number of slides."
+        )
+
+    user_prompt = f"""Research this topic {slide_guidance}:
 
 Topic: {topic}
 Target audience: {audience}
@@ -78,11 +91,7 @@ Target audience: {audience}
     if additional_context:
         user_prompt += f"\nAdditional context provided by the author:\n{additional_context}\n"
 
-    user_prompt += f"""
-The presentation will have approximately {num_slides} slides, so provide enough
-content for that — typically 6-10 key points, 3-6 statistics, and 1-3 comparisons.
-
-Return ONLY the JSON object, no markdown fencing, no explanation."""
+    user_prompt += f"\n{content_guidance}\n\nReturn ONLY the JSON object, no markdown fencing, no explanation."""
 
     messages = [
         Message(role="system", content=RESEARCH_SYSTEM_PROMPT),

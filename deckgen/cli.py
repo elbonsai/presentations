@@ -49,6 +49,7 @@ Examples:
   generate-deck "Progressive Disclosure in Chat UIs"
   generate-deck "Conversational AI Design Patterns" --slides 12 --audience "UX designers"
   generate-deck "WebSocket vs SSE" --context "Focus on real-time chat applications"
+  generate-deck "RAG Architecture" --reference notes.md
   generate-deck "RAG Architecture" --output my-rag-deck.html
 
 Environment variables for LLM providers (set one):
@@ -61,8 +62,8 @@ Environment variables for LLM providers (set one):
 
     parser.add_argument("topic", help="The topic to research and present")
     parser.add_argument(
-        "--slides", "-s", type=int, default=10,
-        help="Number of slides (default: 10)",
+        "--slides", "-s", type=int, default=None,
+        help="Number of slides (omit to let the LLM decide based on content)",
     )
     parser.add_argument(
         "--audience", "-a", default="technical professionals",
@@ -77,8 +78,12 @@ Environment variables for LLM providers (set one):
         help="Output file path (default: presentations/<topic-slug>.html)",
     )
     parser.add_argument(
-        "--output-dir", "-d", default="presentations",
-        help="Output directory (default: presentations/)",
+        "--output-dir", "-d", default=".",
+        help="Output directory (default: project root)",
+    )
+    parser.add_argument(
+        "--reference", "-r", nargs="+", default=[],
+        help="Markdown file(s) to use as reference content for research",
     )
     parser.add_argument(
         "--research-only", action="store_true",
@@ -99,11 +104,27 @@ Environment variables for LLM providers (set one):
         sys.exit(1)
     print(f"  Using: {provider.name()}\n")
 
+    # Read reference files and append to context
+    context_parts = []
+    if args.context:
+        context_parts.append(args.context)
+    for ref_path in args.reference:
+        ref = Path(ref_path)
+        if not ref.exists():
+            print(f"  Error: reference file not found: {ref_path}", file=sys.stderr)
+            sys.exit(1)
+        content = ref.read_text()
+        context_parts.append(f"--- Reference: {ref.name} ---\n{content}")
+        print(f"  Loaded reference: {ref_path} ({len(content)} chars)")
+    combined_context = "\n\n".join(context_parts)
+
     # Phase 1: Research
     print(f"Researching: {args.topic}")
     print(f"  Audience: {args.audience}")
     if args.context:
         print(f"  Context: {args.context}")
+    if args.reference:
+        print(f"  References: {len(args.reference)} file(s)")
     print()
 
     t0 = time.time()
@@ -112,7 +133,7 @@ Environment variables for LLM providers (set one):
             provider=provider,
             topic=args.topic,
             audience=args.audience,
-            additional_context=args.context,
+            additional_context=combined_context,
             num_slides=args.slides,
         )
     except Exception as e:
@@ -132,7 +153,8 @@ Environment variables for LLM providers (set one):
         return
 
     # Phase 2: Compose slides
-    print(f"Composing {args.slides} slides...")
+    slide_label = f"{args.slides} slides" if args.slides else "slides (auto)"
+    print(f"Composing {slide_label}...")
     t1 = time.time()
     try:
         deck = compose_deck(
@@ -153,7 +175,7 @@ Environment variables for LLM providers (set one):
         output_path = Path(args.output)
     else:
         slug = slugify(args.topic)
-        output_path = Path(args.output_dir) / f"{slug}.html"
+        output_path = Path(args.output_dir) / slug / "index.html"
 
     print(f"Rendering presentation...")
     try:

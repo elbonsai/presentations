@@ -75,11 +75,18 @@ Return ONLY valid JSON:
 def compose_deck(
     provider: LLMProvider,
     research: ResearchResult,
-    num_slides: int = 10,
+    num_slides: int | None = None,
 ) -> DeckContent:
     """Use the LLM to compose slide content from research."""
 
-    user_prompt = f"""Create a {num_slides}-slide presentation from this research:
+    if num_slides:
+        count_instruction = f"Create a {num_slides}-slide presentation"
+        count_constraint = f"Create exactly {num_slides} slides."
+    else:
+        count_instruction = "Create a presentation with the ideal number of slides"
+        count_constraint = "Choose the right number of slides to cover the content thoroughly without padding."
+
+    user_prompt = f"""{count_instruction} from this research:
 
 RESEARCH DATA:
 {json.dumps({
@@ -93,7 +100,7 @@ RESEARCH DATA:
     "audience": research.audience,
 }, indent=2)}
 
-Create exactly {num_slides} slides. Use varied slide types.
+{count_constraint} Use varied slide types.
 The first slide must be type "title" and the last must be type "closing".
 
 Return ONLY the JSON object, no markdown fencing."""
